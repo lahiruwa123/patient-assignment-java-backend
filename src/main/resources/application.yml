@@ -1,0 +1,51 @@
+spring:
+  application:
+    name: patient-service
+
+  # Database Configuration
+  datasource:
+    url: jdbc:postgresql://127.0.0.1:5432/patient
+    username: myuser
+    password: mypassword
+    driver-class-name: org.postgresql.Driver
+    hikari:
+      maximum-pool-size: 10
+      minimum-idle: 2
+      connection-timeout: 30000
+
+  # JPA Configuration
+  jpa:
+    hibernate:
+      ddl-auto: create
+    show-sql: true
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        format_sql: true
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+
+  # H2 Console (for development if needed)
+  h2:
+    console:
+      enabled: true
+      path: /h2-console
+      settings:
+        web-allow-others: true
+
+# Server Configuration
+server:
+  port: 8000
+  servlet:
+    context-path: /patient-api
+  compression:
+    enabled: true
+    mime-types: application/json
+
+# OpenAPI Configuration
+springdoc:
+  api-docs:
+    path: /patient-registration-api
+  swagger-ui:
+    path: /patient-api-documentation.html
+    tags-sorter: alpha
+  show-actuator: true
