@@ -1,0 +1,99 @@
+### 1. GET ALL PATIENTS
+GET http://localhost:8000/patient-api/api/v1/patients
+Content-Type: application/json
+Accept: application/json
+
+> {%
+    client.test("Get all patients - success", function() {
+        client.assert(response.status === 200, "Response status is not 200");
+        client.assert(response.contentType.mimeType === "application/json", "Expected 'application/json'");
+    });
+%}
+
+### 2. CREATE A NEW PATIENT
+POST http://localhost:8000/patient-api/api/v1/patients
+Content-Type: application/json
+Accept: application/json
+
+{
+  "firstName": "Lahiru",
+  "lastName": "Wa",
+  "email": "lw@example.com",
+  "address": "123 Main Street",
+  "city": "Colombo",
+  "state": "SL",
+  "zipCode": "10001",
+  "phoneNumber": "123-456-7890"
+}
+
+> {%
+    client.test("Create patient - success", function() {
+        client.assert(response.status === 201, "Response status is not 201");
+        client.assert(response.contentType.mimeType === "application/json", "Expected 'application/json'");
+
+        // Store the created patient ID for later use
+        client.global.set("patientId", response.body.id);
+        client.global.set("patientEmail", response.body.email);
+    });
+%}
+
+### 3. GET PATIENT BY ID
+GET http://localhost:8000/patient-api/api/v1/patients/2
+Content-Type: application/json
+Accept: application/json
+
+> {%
+    client.test("Get patient by ID - success", function() {
+        client.assert(response.status === 200, "Response status is not 200");
+        client.assert(response.body.id === client.global.get("patientId"), "Patient ID mismatch");
+    });
+%}
+
+### 4. UPDATE PATIENT
+PUT http://localhost:8000/patient-api/api/v1/patients/3
+Content-Type: application/json
+Accept: application/json
+
+{
+  "firstName": "Lahiru123",
+  "lastName": "Wa123",
+  "email": "lw@example.com",
+  "address": "123 Main Street",
+  "city": "Colombo",
+  "state": "SL",
+  "zipCode": "10001",
+  "phoneNumber": "123-456-7890"
+}
+
+> {%
+    client.test("Update patient - success", function() {
+        client.assert(response.status === 200, "Response status is not 200");
+        client.assert(response.body.firstName === "Johnathan", "First name not updated");
+        client.assert(response.body.email === "johnathan.doe@example.com", "Email not updated");
+
+        // Update the stored email
+        client.global.set("patientEmail", response.body.email);
+    });
+%}
+
+### 5. DELETE PATIENT
+DELETE http://localhost:8000/patient-api/api/v1/patients/2
+Content-Type: application/json
+Accept: application/json
+
+> {%
+    client.test("Delete patient - success", function() {
+        client.assert(response.status === 204, "Response status is not 204");
+    });
+%}
+
+### 6. VERIFY DELETION (Should return 404)
+GET http://localhost:8000/patient-api/api/v1/patients/3
+Content-Type: application/json
+Accept: application/json
+
+> {%
+    client.test("Verify patient deletion", function() {
+        client.assert(response.status === 404, "Expected 404 after deletion");
+    });
+%}

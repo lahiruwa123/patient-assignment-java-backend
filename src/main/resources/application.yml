@@ -49,3 +49,8 @@ springdoc:
     path: /patient-api-documentation.html
     tags-sorter: alpha
   show-actuator: true
+
+  logging:
+    level:
+      org.springframework.web: DEBUG
+      org.springdoc: DEBUG
